@@ -9,8 +9,8 @@ const Functions = ({ navigation }) => {
     <Background>
       <Subtitle>Functions:</Subtitle>
       <ListFunctions>
-        <Function icon="arrow-up" text="Pay" navigation={navigation} />
-        <Function icon="arrow-down" text="Receive" />
+        <Function icon="arrow-up" text="Pay" onPress={() => navigation.navigate("SearchPay")} />
+        <Function icon="arrow-down" text="Receive" onPress={() => navigation.navigate("Receive")}/>
         <Function icon="credit-card-outline" text="Cards" />
         <Function icon="bank-outline" text="Loan" />
       </ListFunctions>

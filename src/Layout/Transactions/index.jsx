@@ -22,6 +22,7 @@ const Transactions = () => {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const [loadingName, setLoadingName] = useState(false);
+  const [loadingTransaction, setLoadingTransaction] = useState(false);
 
   const [userName, setUserName] = useState("");
 
@@ -51,17 +52,16 @@ const Transactions = () => {
     setLoading(true);
 
     await api
-      .get(`/api/transaction/search/?limit=3&offset=${offset}`, {
+      .get(`/api/transaction/search/?limit=6&offset=${offset}`, {
         headers: header,
       })
       .then((response) => {
         setData((prevData) => [...prevData, ...response.data.results]);
-        setOffset(offset + 6)
+        setOffset(offset + 6);
       })
       .catch((error) => console.error("Error fetching data:", error))
       .finally((e) => setLoading(false));
   };
-
 
   const { dataQuery, isLoading, error } = useQuery(
     "transactions",
@@ -72,10 +72,14 @@ const Transactions = () => {
           if (data[0] !== undefined) {
             for (const transaction in response.data.results) {
               if (response.data.results[transaction].id > data[0].id) {
-                setData((prevData) => [response.data.results[transaction], ...prevData]);
-                console.log(data)
+                setLoadingTransaction(true);
+                setData((prevData) => [
+                  response.data.results[transaction],
+                  ...prevData,
+                ]);
               }
             }
+            setLoadingTransaction(false);
           }
         });
     },
@@ -92,16 +96,17 @@ const Transactions = () => {
     fetchData();
   }, [offset]);
 
-
   return (
     <Background>
       <Subtitle>Transactions:</Subtitle>
       <ViewsTransactions>
-        {!loadingName ? (
+        {!loadingName && !loadingTransaction ? (
           <FlatList
             data={data}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => <Transaction item={item} userName={userName} />}
+            renderItem={({ item }) => (
+              <Transaction item={item} userName={userName} />
+            )}
             onEndReached={fetchData}
             onEndReachedThreshold={0.1}
             ItemSeparatorComponent={<View style={{ height: 35 }} />}

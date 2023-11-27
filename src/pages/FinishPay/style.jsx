@@ -5,7 +5,7 @@ export const Background = styled.View`
   width: 100%;
   height: 100%;
   padding: 25px;
-  /* justify-content: space-between; */
+  justify-content: space-between;
   align-items: center;
   gap: 50px;
 `;

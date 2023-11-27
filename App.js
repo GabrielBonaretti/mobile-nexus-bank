@@ -3,6 +3,7 @@ import Home from "./src/pages/Home";
 import Login from "./src/pages/Login";
 import Register from "./src/pages/Register";
 import SearchPay from "./src/pages/SearchPay";
+import Receive from "./src/pages/Receive";
 
 // react navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -16,7 +17,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import FinishPay from "./src/pages/FinishPay";
 
 // App.jsx
-import Toast, { SuccessToast, ErrorToast, } from "react-native-toast-message";
+import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
 
 const Stack = createStackNavigator();
 
@@ -30,9 +31,14 @@ const toastConfig = {
         borderLeftColor: "green",
         backgroundColor: "#202020",
       }}
+      contentContainerStyle={{
+        paddingHorizontal: 15,
+      }}
+      text1NumberOfLines={4}
       text1Style={{
         fontSize: 15,
         color: "#FFF",
+        width: 300,
       }}
     />
   ),
@@ -44,6 +50,7 @@ const toastConfig = {
         borderLeftColor: "red",
         backgroundColor: "#202020",
       }}
+      text1NumberOfLines={4}
       text1Style={{
         fontSize: 15,
         color: "#FFF",
@@ -108,7 +115,7 @@ export default function App() {
                 options={{
                   headerShown: true,
                   gestureEnabled: false,
-                  title: "Pay",
+                  title: "Pay", 
                   headerStyle: {
                     backgroundColor: "#1a1e1c", // Set your desired background color
                   },
@@ -128,6 +135,25 @@ export default function App() {
                   headerShown: true,
                   gestureEnabled: false,
                   title: "Amount to pay",
+                  headerStyle: {
+                    backgroundColor: "#1a1e1c", // Set your desired background color
+                  },
+                  headerTintColor: "#dbb22f", // Set your desired text color
+                  headerTitleStyle: {
+                    fontWeight: "bold",
+                    color: "#FFF",
+                  },
+                  headerTitleAlign: "center",
+                  headerShadowVisible: false, // Remove the shadow
+                }}
+              />
+              <Stack.Screen
+                name="Receive"
+                component={Receive}
+                options={{
+                  headerShown: true,
+                  gestureEnabled: false,
+                  title: "Receive",
                   headerStyle: {
                     backgroundColor: "#1a1e1c", // Set your desired background color
                   },

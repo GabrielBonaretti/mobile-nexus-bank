@@ -32,13 +32,15 @@ const Transaction = ({ item, userName }) => {
   }, []);
 
   const verifySent = () => {
-      if (item.account_received.user.name == userName) {
-      console.log("recebeu")
+    if (item.account_sent === null) {
+      setUrlImage(require("../../images/receive.png"));
+      setNameOtherUser("Anonymous");
+      setSent(false);
+    } else if (item.account_received.user.name == userName) {
       setUrlImage(require("../../images/receive.png"));
       setNameOtherUser(item.account_sent.user.name);
       setSent(false);
     } else if (item.account_sent.user.name == userName) {
-      console.log("enviou")
       setUrlImage(require("../../images/sent.png"));
       setNameOtherUser(item.account_received.user.name);
       setSent(true);
