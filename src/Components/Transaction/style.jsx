@@ -29,7 +29,12 @@ export const DashedLine = styled.View`
 
 export const TextStyled = styled.Text`
   font-size: 13px;
-  color: #fff;
+  color: #ccc;
+`;
+
+export const TextValue = styled.Text`
+  font-size: 13px;
+  color: ${props => props.$sent ? "red" : "green"};
 `;
 
 export const ViewRight = styled.View`

@@ -15,7 +15,7 @@ export const Subtitle = styled.Text`
 `;
 
 export const ViewsTransactions = styled.View`
-  padding: 15px;
+  padding: 30px;
   background-color: #202020;
   border-radius: 15px;
   flex: 1;

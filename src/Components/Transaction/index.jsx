@@ -5,30 +5,67 @@ import {
   IconTransaction,
   LeftContent,
   TextStyled,
+  TextValue,
   ViewRight,
 } from "./style";
 
-import { Image, View } from "react-native";
+// react
+import { useEffect, useState } from "react";
 
-const Transaction = () => {
+import { View } from "react-native";
+
+const Transaction = ({ item, userName }) => {
+  const [urlImage, setUrlImage] = useState(require("../../images/sent.png"));
+  const [nameOtherUser, setNameOtherUser] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const apiDatetime = new Date(item.create); // Replace this with your actual Date object
+  const day = apiDatetime.getDate();
+  const month = apiDatetime.getMonth() + 1; // Months are zero-based, so add 1
+  const year = apiDatetime.getFullYear();
+  const formattedDate = `${day.toString().padStart(2, "0")}/${month
+    .toString()
+    .padStart(2, "0")}/${year}`;
+
+  useEffect(() => {
+    verifySent();
+  }, []);
+
+  const verifySent = () => {
+    console.log(item.account_received.user.name)
+    console.log(item.account_sent.user.name)
+    console.log(userName)
+    console.log(item.account_received.user.name == userName)
+    console.log(item.account_sent.user.name == userName)
+    if (item.account_received.user.name == userName) {
+      setUrlImage(require("../../images/receive.png"));
+      setNameOtherUser(item.account_sent.user.name);
+      setSent(false);
+    }
+    if (item.account_sent.user.name == userName) {
+      setUrlImage(require("../../images/sent.png"));
+      setNameOtherUser(item.account_received.user.name);
+      setSent(true);
+    }
+  };
+
   return (
     <Background>
       <LeftContent>
-        <IconTransaction
-          source={require("../../images/sent.png")}
-          style={{ tintColor: "#dbb22f" }}
-        />
+        <IconTransaction source={urlImage} style={{ tintColor: "#dbb22f" }} />
 
         <DashedLine />
 
         <View>
-          <TextStyled>R$ 100,00</TextStyled>
-          <TextStyled>Gabriel Bonaretti da Silva</TextStyled>
+          <TextValue $sent={sent}>
+            R$ {parseFloat(item.value).toFixed(2)}
+          </TextValue>
+          <TextStyled>{nameOtherUser}</TextStyled>
         </View>
       </LeftContent>
       <ViewRight>
-        <TextStyled>25/10/2004</TextStyled>
-        <TextStyled>Transfer</TextStyled>
+        <TextStyled>{formattedDate}</TextStyled>
+        <TextStyled>{item.type_transaction}</TextStyled>
       </ViewRight>
     </Background>
   );
