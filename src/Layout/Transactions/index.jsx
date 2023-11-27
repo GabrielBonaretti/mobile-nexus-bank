@@ -31,21 +31,13 @@ const Transactions = () => {
     Authorization: "Bearer " + auth,
   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [offset]);
-
   const getUser = async () => {
     if (loadingName) return;
 
     setLoadingName(true);
 
     await api
-      .get("/api/user", {
+      .get("/api/user/", {
         headers: header,
       })
       .then((response) => setUserName(response.data.name))
@@ -55,7 +47,7 @@ const Transactions = () => {
 
   const fetchData = async () => {
     if (loading) return;
-    console.log("teste")
+
     setLoading(true);
 
     await api
@@ -64,11 +56,42 @@ const Transactions = () => {
       })
       .then((response) => {
         setData((prevData) => [...prevData, ...response.data.results]);
-        setOffset(offset + 3);
+        setOffset(offset + 6)
       })
       .catch((error) => console.error("Error fetching data:", error))
       .finally((e) => setLoading(false));
   };
+
+
+  const { dataQuery, isLoading, error } = useQuery(
+    "transactions",
+    () => {
+      return api
+        .get("/api/transaction/search/?limit=6&offset=0", { headers: header })
+        .then((response) => {
+          if (data[0] !== undefined) {
+            for (const transaction in response.data.results) {
+              if (response.data.results[transaction].id > data[0].id) {
+                setData((prevData) => [response.data.results[transaction], ...prevData]);
+                console.log(data)
+              }
+            }
+          }
+        });
+    },
+    {
+      refetchInterval: 10000,
+    }
+  );
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [offset]);
+
 
   return (
     <Background>
@@ -77,14 +100,12 @@ const Transactions = () => {
         {!loadingName ? (
           <FlatList
             data={data}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <Transaction item={item} userName={userName} />
-            )}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => <Transaction item={item} userName={userName} />}
             onEndReached={fetchData}
             onEndReachedThreshold={0.1}
-            ListFooterComponent={<ActivityIndicator animating size="large" />}
             ItemSeparatorComponent={<View style={{ height: 35 }} />}
+            showsVerticalScrollIndicator={false}
           />
         ) : (
           <ActivityIndicator animating size="large" />
