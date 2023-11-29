@@ -4,6 +4,7 @@ import Login from "./src/pages/Login";
 import Register from "./src/pages/Register";
 import SearchPay from "./src/pages/SearchPay";
 import Receive from "./src/pages/Receive";
+import Cards from "./src/pages/Cards";
 
 // react navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -31,14 +32,10 @@ const toastConfig = {
         borderLeftColor: "green",
         backgroundColor: "#202020",
       }}
-      contentContainerStyle={{
-        paddingHorizontal: 15,
-      }}
       text1NumberOfLines={4}
       text1Style={{
         fontSize: 15,
         color: "#FFF",
-        width: 300,
       }}
     />
   ),
@@ -76,6 +73,34 @@ const toastConfig = {
 export default function App() {
   const auth = useAuthStore((state) => state.accessToken);
 
+  options = {
+    headerShown: true,
+    gestureEnabled: false,
+    title: "",
+    headerStyle: {
+      backgroundColor: "#1a1e1c", // Set your desired background color
+    },
+    headerTintColor: "#dbb22f", // Set your desired text color
+    headerTitleStyle: {
+      fontWeight: "bold",
+      color: "#FFF",
+    },
+    headerTitleAlign: "center",
+    headerShadowVisible: false, // Remove the shadow
+  };
+
+  options_pay = { ...options };
+  options_pay.title = "Pay";
+
+  options_finish_pay = { ...options };
+  options_finish_pay.title = "Amount to pay";
+
+  options_receive = { ...options };
+  options_receive.title = "Receive";
+
+  options_cards = { ...options };
+  options_cards.title = "Cards";
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -112,59 +137,23 @@ export default function App() {
               <Stack.Screen
                 name="SearchPay"
                 component={SearchPay}
-                options={{
-                  headerShown: true,
-                  gestureEnabled: false,
-                  title: "Pay", 
-                  headerStyle: {
-                    backgroundColor: "#1a1e1c", // Set your desired background color
-                  },
-                  headerTintColor: "#dbb22f", // Set your desired text color
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                    color: "#FFF",
-                  },
-                  headerTitleAlign: "center",
-                  headerShadowVisible: false, // Remove the shadow
-                }}
+                options={options_pay}
               />
               <Stack.Screen
                 name="FinishPay"
                 component={FinishPay}
-                options={{
-                  headerShown: true,
-                  gestureEnabled: false,
-                  title: "Amount to pay",
-                  headerStyle: {
-                    backgroundColor: "#1a1e1c", // Set your desired background color
-                  },
-                  headerTintColor: "#dbb22f", // Set your desired text color
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                    color: "#FFF",
-                  },
-                  headerTitleAlign: "center",
-                  headerShadowVisible: false, // Remove the shadow
-                }}
+                options={options_finish_pay}
               />
               <Stack.Screen
                 name="Receive"
                 component={Receive}
-                options={{
-                  headerShown: true,
-                  gestureEnabled: false,
-                  title: "Receive",
-                  headerStyle: {
-                    backgroundColor: "#1a1e1c", // Set your desired background color
-                  },
-                  headerTintColor: "#dbb22f", // Set your desired text color
-                  headerTitleStyle: {
-                    fontWeight: "bold",
-                    color: "#FFF",
-                  },
-                  headerTitleAlign: "center",
-                  headerShadowVisible: false, // Remove the shadow
-                }}
+                options={options_receive}
+              />
+
+              <Stack.Screen
+                name="Cards"
+                component={Cards}
+                options={options_cards}
               />
             </Stack.Navigator>
           )}

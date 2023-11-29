@@ -32,10 +32,14 @@ import Toast from "react-native-toast-message";
 const Login = ({ navigation }) => {
   const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   const handleSubmit = async () => {
+    setLoading(true)
+
     await api
       .post("/api/login/", {
         cpf: cpf,
@@ -54,6 +58,8 @@ const Login = ({ navigation }) => {
           text1: Object.values(error.response.data)[0],
         });
       });
+
+    setLoading(false)
   };
 
   return (
@@ -75,7 +81,11 @@ const Login = ({ navigation }) => {
       </ViewInputs>
 
       <ViewButtons>
-        <Button primary={true} content="Log in" onClick={handleSubmit} />
+        {!loading ? (
+          <Button primary={true} content="Log in" onClick={handleSubmit} disabled={false}/>
+        ) : (
+          <Button primary={true} content="Carregando..." onClick={handleSubmit} disabled={true}/>
+        )}
         <ViewLine>
           <Line />
           <TextLine>OR</TextLine>
