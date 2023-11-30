@@ -49,7 +49,7 @@ const CardTransactions = () => {
     setLoadingData(true);
 
     await api
-      .get(`/api/card/${card.id}/transactions/?limit=10&offset=${offset}`, {
+      .get(`/api/card/${card.id}/transactions/?limit=2&offset=${offset}`, {
         headers: header,
       })
       .then((response) => {
@@ -105,7 +105,7 @@ const CardTransactions = () => {
                 name="plus"
                 size={45}
                 color={"#DBB22F"}
-                onPress={() => setOffset(offset + 10)}
+                onPress={() => setOffset(offset + 2)}
               />
             </View>
           )}
