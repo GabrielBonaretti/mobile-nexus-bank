@@ -23,7 +23,6 @@ const Transactions = () => {
   const [loading, setLoading] = useState(false);
   const [loadingName, setLoadingName] = useState(false);
   const [loadingTransaction, setLoadingTransaction] = useState(false);
-
   const [userName, setUserName] = useState("");
 
   const auth = useAuthStore((state) => state.accessToken);

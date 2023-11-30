@@ -40,7 +40,7 @@ export const DescriptionView = styled.View`
 `;
 
 export const Subtitle = styled.Text`
-  font-size: 15px;
+  font-size: 17px;
   color: #dbb22f;
   font-weight: bold;
 `;

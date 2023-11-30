@@ -50,9 +50,18 @@ const FinishPay = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
+    let endPoint = ""
+    if (typeTransaction == "Transfer") {
+      endPoint = "/api/transaction/"
+    } else if (typeTransaction == "Debit card") {
+      endPoint = "/api/transaction/debitcard/"
+    } else {
+      endPoint = "error"
+    }
+
     await api
       .post(
-        "/api/transaction/",
+        endPoint,
         {
           account_received: user.id,
           value: parseFloat(value),

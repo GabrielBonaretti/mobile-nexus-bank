@@ -19,6 +19,7 @@ import FinishPay from "./src/pages/FinishPay";
 
 // App.jsx
 import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
+import CardTransactions from "./src/pages/CardTransactions";
 
 const Stack = createStackNavigator();
 
@@ -101,6 +102,9 @@ export default function App() {
   options_cards = { ...options };
   options_cards.title = "Cards";
 
+  options_cards_transactions = { ...options };
+  options_cards_transactions.title = "Card transactions";
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -154,6 +158,12 @@ export default function App() {
                 name="Cards"
                 component={Cards}
                 options={options_cards}
+              />
+
+              <Stack.Screen
+                name="CardTransaction"
+                component={CardTransactions}
+                options={options_cards_transactions}
               />
             </Stack.Navigator>
           )}

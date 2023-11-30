@@ -1,16 +1,9 @@
 // styled components
-import { Background, BottomView, MenssageView, TextNewCredit, TopView } from "./style"
-import { Subtitle } from "../FinishPay/style"
+import { Background } from "./style";
+import { Subtitle } from "../FinishPay/style";
 
-// layout 
+// layout
 import CardSpace from "../../Layout/CardSpace";
-
-// components
-import { ScrollView } from "react-native"
-import Button from "../../Components/Button";
-
-// Icons
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 // axios
 import { api } from "../../service/api";
@@ -19,61 +12,67 @@ import { useEffect, useState } from "react";
 // zustand
 import { useAuthStore } from "../../store/authStore";
 
-const Cards = () => {
-    const [debitCard, setDebitCard] = useState()
-    const [creditCard, setCreditCard] = useState()
+const Cards = ({ navigation }) => {
+  const [debitCard, setDebitCard] = useState();
+  const [creditCard, setCreditCard] = useState();
 
-    const auth = useAuthStore((state) => state.accessToken);
+  const auth = useAuthStore((state) => state.accessToken);
 
-    const header = {
-        Authorization: "Bearer " + auth,
-    };
+  const header = {
+    Authorization: "Bearer " + auth,
+  };
 
-    const fetchAllCard = async () => {
-        await api
-            .get("/api/card/", { headers: header })
-            .then((response) => {
-                for (const card of response.data) {
-                    if (card.type_card == "Debit") {
-                        setDebitCard(card)
-                    } else {
-                        setCreditCard(card)
-                    }
-                }
-            })
-            .catch((error) => console.log(error))
-    }
+  const fetchAllCard = async () => {
+    await api
+      .get("/api/card/", { headers: header })
+      .then((response) => {
+        for (const card of response.data) {
+          if (card.type_card == "Debit") {
+            setDebitCard(card);
+          } else {
+            setCreditCard(card);
+          }
+        }
+      })
+      .catch((error) => console.log(error));
+  };
 
-    useEffect(() => {
-        fetchAllCard()
-    }, [])
+  const handleBlockDebitCard = async () => {
+    await api
+      .get(`/api/card/${debitCard.id}/block/`, { headers: header })
+      .then((response) => setDebitCard())
+      .catch((error) => console.log(error));
+  };
 
-    return (
-        <ScrollView>
-            <Background>
-                <TopView>
-                    <MenssageView>
-                        <MaterialCommunityIcons name="credit-card-plus-outline" size={45} color={"#DBB22F"} />
-                        <TextNewCredit>Take control of your finances with a simple activation process – just one clicks away from enjoying the convenience of your new credit card.</TextNewCredit>
-                    </MenssageView>
+  const handleCreateDebitCard = async () => {
+    await api
+      .get(`/api/card/newdebit/`, { headers: header })
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
 
-                    <Button
-                        primary={false}
-                        content="New credit card!"
-                        onClick={(e) => console.log("oi")}
-                    />
-                </TopView>
+    fetchAllCard();
+  };
 
-                <BottomView>
-                    <Subtitle>My Cards:</Subtitle>
+  useEffect(() => {
+    fetchAllCard();
+  }, []);
 
-                    <CardSpace typeCard="Debit card" card={debitCard} />
+  return (
+    <Background>
+      <Subtitle>My Cards:</Subtitle>
 
-                    <CardSpace typeCard="Credit card" card={creditCard} />
-                </BottomView>
-            </Background>
-        </ScrollView>
-    )
-}
+      <CardSpace
+        typeCard="Debit card"
+        card={debitCard}
+        handleBlockCard={handleBlockDebitCard}
+        handleCreateCard={handleCreateDebitCard}
+        onPress={() =>
+          navigation.navigate("CardTransaction", { card: debitCard })
+        }
+      />
+      <CardSpace typeCard="Credit card" card={creditCard} />
+    </Background>
+  );
+};
 
-export default Cards
+export default Cards;
