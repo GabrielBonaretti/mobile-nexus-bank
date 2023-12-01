@@ -46,7 +46,9 @@ const Cards = ({ navigation }) => {
 
   const handleCreateDebitCard = async () => {
     await api
-      .get(`/api/card/newdebit/`, { headers: header })
+      .post(`/api/card/new/`, {
+        type_card: "Debit"
+      }, { headers: header })
       .then((response) => console.log(response))
       .catch((error) => console.log(error));
 
