@@ -64,11 +64,12 @@ export const LineContent = styled.View`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;
 
 export const Title = styled.Text`
   color: #adb2b1;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 900;
 `;
 

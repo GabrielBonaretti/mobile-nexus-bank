@@ -25,12 +25,15 @@ import { useAuthStore } from "../../store/authStore";
 
 // Icons
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Text } from "react-native";
+import Credit from "../../Components/Credit";
 
-const CardTransactions = () => {
+const CardTransactions = ({ navigation }) => {
   const [offset, setOffset] = useState(0);
   const [hasNext, setHasNext] = useState(true);
 
-  const [data, setData] = useState([]);
+  const [dataTransactions, setDataTransactions] = useState([]);
+  const [dataCredit, setDataCredit] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
 
   const [userName, setUserName] = useState("");
@@ -45,7 +48,7 @@ const CardTransactions = () => {
     Authorization: "Bearer " + auth,
   };
 
-  const fetchData = async () => {
+  const fetchDataTransactions = async () => {
     setLoadingData(true);
 
     await api
@@ -57,7 +60,23 @@ const CardTransactions = () => {
           setHasNext(false);
         }
 
-        setData((prevData) => [...prevData, ...response.data.results]);
+        setDataTransactions((prevData) => [
+          ...prevData,
+          ...response.data.results,
+        ]);
+      })
+      .finally(() => setLoadingData(false));
+  };
+
+  const fetchDataCredits = async () => {
+    setLoadingData(true);
+
+    await api
+      .get("/api/credit/", {
+        headers: header,
+      })
+      .then((response) => {
+        setDataCredit(response.data);
       })
       .finally(() => setLoadingData(false));
   };
@@ -73,10 +92,11 @@ const CardTransactions = () => {
 
   useEffect(() => {
     getUser();
+    fetchDataCredits();
   }, []);
 
   useEffect(() => {
-    fetchData();
+    fetchDataTransactions();
   }, [offset]);
 
   return (
@@ -87,27 +107,49 @@ const CardTransactions = () => {
         </CardView>
 
         <ContentViews>
-          <Subtitle>Transactions:</Subtitle>
+          {card.type_card == "Credit" ? (
+            <>
+              <Subtitle>All credits:</Subtitle>
+              <TransactionsViews>
+                {!loadingData && !loadingName && (
+                  <>
+                    {dataCredit.map((creditItem) => (
+                      <Credit
+                        creditItem={creditItem}
+                        onPress={() =>
+                          navigation.navigate("Parcels", { content: creditItem, type: "Credit" })
+                        }
+                      />
+                    ))}
+                  </>
+                )}
+              </TransactionsViews>
+            </>
+          ) : (
+            <>
+              <Subtitle>Transactions:</Subtitle>
 
-          <TransactionsViews>
-            {!loadingData && !loadingName && (
-              <>
-                {data.map((transactionItem) => (
-                  <Transaction item={transactionItem} userName={userName} />
-                ))}
-              </>
-            )}
-          </TransactionsViews>
+              <TransactionsViews>
+                {!loadingData && !loadingName && (
+                  <>
+                    {dataTransactions.map((transactionItem) => (
+                      <Transaction item={transactionItem} userName={userName} />
+                    ))}
+                  </>
+                )}
+              </TransactionsViews>
 
-          {hasNext && (
-            <View style={{ width: "100%", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="plus"
-                size={45}
-                color={"#DBB22F"}
-                onPress={() => setOffset(offset + 2)}
-              />
-            </View>
+              {hasNext && (
+                <View style={{ width: "100%", alignItems: "center" }}>
+                  <MaterialCommunityIcons
+                    name="plus"
+                    size={45}
+                    color={"#DBB22F"}
+                    onPress={() => setOffset(offset + 2)}
+                  />
+                </View>
+              )}
+            </>
           )}
         </ContentViews>
       </Scroll>

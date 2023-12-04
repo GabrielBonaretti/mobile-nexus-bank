@@ -39,6 +39,7 @@ const FinishPay = ({ navigation }) => {
   const [value, setValue] = useState(formatValue(0));
   const [typeTransaction, setTypeTransaction] = useState("Transfer");
   const [description, setDescription] = useState("");
+  const [numberParcels, setNumberParcels] = useState();
 
   const route = useRoute();
   const user = route.params?.user || "Default value if not provided";
@@ -50,24 +51,37 @@ const FinishPay = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    let endPoint = ""
+    let endPoint = "";
     if (typeTransaction == "Transfer") {
-      endPoint = "/api/transaction/"
+      endPoint = "/api/transaction/";
+      data = {
+        account_received: user.id,
+        value: parseFloat(value),
+        description: description,
+        type_transaction: typeTransaction,
+      };
     } else if (typeTransaction == "Debit card") {
-      endPoint = "/api/transaction/debitcard/"
-    } else {
-      endPoint = "error"
+      endPoint = "/api/transaction/debitcard/";
+      data = {
+        account_received: user.id,
+        value: parseFloat(value),
+        description: description,
+        type_transaction: typeTransaction,
+      };
+    } else if (typeTransaction == "Credit card") {
+      endPoint = "/api/credit/";
+      data = {
+        account_received: user.id,
+        valueTotal: parseFloat(value),
+        numberTotalParcels: parseInt(numberParcels),
+        observation: description,
+      };
     }
 
     await api
       .post(
         endPoint,
-        {
-          account_received: user.id,
-          value: parseFloat(value),
-          description: description,
-          type_transaction: typeTransaction,
-        },
+        data,
         { headers: header }
       )
       .then((response) => {
@@ -98,6 +112,8 @@ const FinishPay = ({ navigation }) => {
       <MyPicker
         selectedValue={typeTransaction}
         onValueChange={(itemValue) => setTypeTransaction(itemValue)}
+        numberParcels={numberParcels}
+        setNumberParcels={(e) => setNumberParcels(e)}
       />
 
       <DescriptionView>

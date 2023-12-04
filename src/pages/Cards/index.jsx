@@ -12,6 +12,9 @@ import { useEffect, useState } from "react";
 // zustand
 import { useAuthStore } from "../../store/authStore";
 
+// notify
+import Toast from "react-native-toast-message";
+
 const Cards = ({ navigation }) => {
   const [debitCard, setDebitCard] = useState();
   const [creditCard, setCreditCard] = useState();
@@ -37,20 +40,30 @@ const Cards = ({ navigation }) => {
       .catch((error) => console.log(error));
   };
 
-  const handleBlockDebitCard = async () => {
+  const handleBlockCard = async () => {
     await api
       .get(`/api/card/${debitCard.id}/block/`, { headers: header })
       .then((response) => setDebitCard())
       .catch((error) => console.log(error));
   };
 
-  const handleCreateDebitCard = async () => {
+  const handleCreateDebitCard = async (type_card_param) => {
     await api
-      .post(`/api/card/new/`, {
-        type_card: "Debit"
-      }, { headers: header })
+      .post(
+        `/api/card/new/`,
+        {
+          type_card: type_card_param,
+        },
+        { headers: header }
+      )
       .then((response) => console.log(response))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error.response.data)
+        Toast.show({
+          type: "error",
+          text1: Object.values(error.response.data),
+        });
+      });
 
     fetchAllCard();
   };
@@ -66,13 +79,21 @@ const Cards = ({ navigation }) => {
       <CardSpace
         typeCard="Debit card"
         card={debitCard}
-        handleBlockCard={handleBlockDebitCard}
-        handleCreateCard={handleCreateDebitCard}
+        handleBlockCard={handleBlockCard}
+        handleCreateCard={() => handleCreateDebitCard("Debit")}
         onPress={() =>
           navigation.navigate("CardTransaction", { card: debitCard })
         }
       />
-      <CardSpace typeCard="Credit card" card={creditCard} />
+      <CardSpace
+        typeCard="Credit card"
+        card={creditCard}
+        handleBlockCard={handleBlockCard}
+        handleCreateCard={() => handleCreateDebitCard("Credit")}
+        onPress={() =>
+          navigation.navigate("CardTransaction", { card: creditCard })
+        }
+      />
     </Background>
   );
 };

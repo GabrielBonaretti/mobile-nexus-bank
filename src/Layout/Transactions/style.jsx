@@ -4,8 +4,6 @@ export const Background = styled.View`
   display: flex;
   gap: 15px;
   flex: 1;
-
-  display: flex;
 `;
 
 export const Subtitle = styled.Text`

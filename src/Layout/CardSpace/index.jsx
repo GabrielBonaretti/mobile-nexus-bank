@@ -56,11 +56,7 @@ const CardSpace = ({
           <Button
             primary={false}
             content={`New ${typeCard.toLowerCase()}!`}
-            onClick={(e) => {
-              if (typeCard == "Debit card") {
-                handleCreateCard();
-              }
-            }}
+            onClick={handleCreateCard}
           />
         </TopView>
       )}

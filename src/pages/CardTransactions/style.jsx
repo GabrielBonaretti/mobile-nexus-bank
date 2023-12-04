@@ -9,7 +9,6 @@ export const Background = styled.View`
   height: 100%;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 30px;
 `;
 
 export const Scroll = styled.ScrollView`
