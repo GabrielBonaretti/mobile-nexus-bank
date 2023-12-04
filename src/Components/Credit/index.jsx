@@ -5,7 +5,6 @@ import ParcelsComponent from "../NumberParcelsComponent";
 import {
   Background,
   Container,
-  ParcelsPayed,
   Subtitle,
   TextStyled,
 } from "./style";

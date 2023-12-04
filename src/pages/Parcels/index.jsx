@@ -7,21 +7,22 @@ import { Content, LineContent, Subtitle, Title } from "../FinishPay/style";
 import { BottomContent, ColumnContent, ParcelsContent, ViewUser } from "./style";
 
 // components
+import ParcelsComponent from "../../Components/ParcelsComponent";
 import NumberParcelsComponent from "../../Components/NumberParcelsComponent";
-import { View } from "react-native";
+import { View, FlatList } from "react-native";
 
 // axios
 import { api } from "../../service/api";
 
 // zustand
 import { useAuthStore } from "../../store/authStore";
+
+// react
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
-import { FlatList } from "react-native";
-import ParcelsComponent from "../../Components/ParcelsComponent";
 
 const Parcels = () => {
   const [data, setData] = useState([]);
+  const [change, setChange] = useState(false);
 
   const route = useRoute();
   const content = route.params?.content || "Default value if not provided";
@@ -40,9 +41,19 @@ const Parcels = () => {
       .catch((error) => console.log(error));
   };
 
+  const handlePayParcel = async (idParcel) => {
+    await api
+      .get(`api/parcelsCredit/${idParcel}/paid/`, { headers: header })
+      .then((response) => {
+        content.numberPayedParcels += 1;
+        setChange(!change)
+      })
+      .catch((error) => console.log(error));
+  }
+
   useEffect(() => {
     fetchParcels();
-  }, []);
+  }, [change])
 
   return (
     <Background>
@@ -74,7 +85,9 @@ const Parcels = () => {
             data={data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
-              <ParcelsComponent item={item}/>
+              <>
+                <ParcelsComponent item={item} onPress={() => handlePayParcel(item.id)} />
+              </>
             )}
             ItemSeparatorComponent={<View style={{ height: 35 }} />}
             showsVerticalScrollIndicator={false}

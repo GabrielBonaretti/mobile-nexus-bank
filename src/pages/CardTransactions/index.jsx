@@ -5,17 +5,22 @@ import {
   ContentViews,
   Scroll,
   TransactionsViews,
+  Subtitle,
+  ViewSubtitle,
+  ViewTeste,
+  ButtonSection
 } from "./style";
-import { Subtitle } from "../FinishPay/style";
 
 // components
-import { ScrollView, View } from "react-native";
+import Credit from "../../Components/Credit";
+import { FlatListComponent, View, FlatList } from "react-native";
 import Card from "../../Components/Card";
 import Transaction from "../../Components/Transaction";
 
 // react
 import { useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 
 // axios
 import { api } from "../../service/api";
@@ -25,19 +30,19 @@ import { useAuthStore } from "../../store/authStore";
 
 // Icons
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Text } from "react-native";
-import Credit from "../../Components/Credit";
 
 const CardTransactions = ({ navigation }) => {
   const [offset, setOffset] = useState(0);
-  const [hasNext, setHasNext] = useState(true);
 
   const [dataTransactions, setDataTransactions] = useState([]);
   const [dataCredit, setDataCredit] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [userName, setUserName] = useState("");
   const [loadingName, setLoadingName] = useState(false);
+
+  const [seeCredits, setSeeCredits] = useState(true);
 
   const route = useRoute();
   const card = route.params?.card;
@@ -49,23 +54,20 @@ const CardTransactions = ({ navigation }) => {
   };
 
   const fetchDataTransactions = async () => {
-    setLoadingData(true);
+    if (loading) return;
+
+    setLoading(true);
 
     await api
       .get(`/api/card/${card.id}/transactions/?limit=2&offset=${offset}`, {
         headers: header,
       })
       .then((response) => {
-        if (!response.data.next) {
-          setHasNext(false);
-        }
-
-        setDataTransactions((prevData) => [
-          ...prevData,
-          ...response.data.results,
-        ]);
+        setDataTransactions((prevData) => [...prevData, ...response.data.results]);
+        setOffset(offset + 2);
       })
-      .finally(() => setLoadingData(false));
+      .catch((error) => console.error("Error fetching data:", error))
+      .finally((e) => setLoading(false));
   };
 
   const fetchDataCredits = async () => {
@@ -90,69 +92,106 @@ const CardTransactions = ({ navigation }) => {
       .finally(() => setLoadingName(false));
   };
 
-  useEffect(() => {
-    getUser();
-    fetchDataCredits();
-  }, []);
 
-  useEffect(() => {
-    fetchDataTransactions();
-  }, [offset]);
+  // O código dentro deste bloco será executado sempre que o componente for focado
+  useFocusEffect(
+    useCallback(() => {
+      getUser();
+      fetchDataCredits();
+      fetchDataTransactions();
+    }, [])
+  );
 
   return (
     <Background>
-      <Scroll>
-        <CardView>
-          <Card card={card} />
-        </CardView>
+      <CardView>
+        <Card card={card} />
+      </CardView>
 
-        <ContentViews>
-          {card.type_card == "Credit" ? (
-            <>
-              <Subtitle>All credits:</Subtitle>
+      <ContentViews>
+        {card.type_card == "Credit" ? (
+          <>
+            <ViewSubtitle>
+              <ButtonSection $active={seeCredits} onPress={() => setSeeCredits(true)}>
+                <Subtitle>All credits:</Subtitle>
+              </ButtonSection>
+
+              <ButtonSection $active={!seeCredits} onPress={() => setSeeCredits(false)}>
+                <Subtitle>Transactions:</Subtitle>
+              </ButtonSection>
+            </ViewSubtitle>
+
+
+            <ViewTeste>
               <TransactionsViews>
-                {!loadingData && !loadingName && (
+                {seeCredits ? (
                   <>
-                    {dataCredit.map((creditItem) => (
-                      <Credit
-                        creditItem={creditItem}
-                        onPress={() =>
-                          navigation.navigate("Parcels", { content: creditItem, type: "Credit" })
-                        }
-                      />
-                    ))}
+                    {!loadingData && !loadingName && (
+                      <>
+                        <FlatList
+                          data={dataCredit}
+                          keyExtractor={(item, index) => index.toString()}
+                          renderItem={({ item }) => (
+                            <Credit
+                              creditItem={item}
+                              onPress={() =>
+                                navigation.navigate("Parcels", { content: item, type: "Credit" })
+                              }
+                            />
+                          )}
+                          ItemSeparatorComponent={<View style={{ height: 35 }} />}
+                          showsVerticalScrollIndicator={false}
+                        />
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {!loadingData && !loadingName && (
+                      <>
+                        <FlatList
+                          data={dataTransactions}
+                          keyExtractor={(item, index) => index.toString()}
+                          renderItem={({ item }) => (
+                            <Transaction item={item} userName={userName} />
+                          )}
+                          onEndReached={fetchDataTransactions}
+                          onEndReachedThreshold={0.1}
+                          ItemSeparatorComponent={<View style={{ height: 35 }} />}
+                          showsVerticalScrollIndicator={false}
+                        />
+                      </>
+                    )}
                   </>
                 )}
               </TransactionsViews>
-            </>
-          ) : (
-            <>
-              <Subtitle>Transactions:</Subtitle>
+            </ViewTeste>
 
-              <TransactionsViews>
-                {!loadingData && !loadingName && (
-                  <>
-                    {dataTransactions.map((transactionItem) => (
-                      <Transaction item={transactionItem} userName={userName} />
-                    ))}
-                  </>
-                )}
-              </TransactionsViews>
+          </>
+        ) : (
+          <>
+            <Subtitle>Transactions:</Subtitle>
 
-              {hasNext && (
-                <View style={{ width: "100%", alignItems: "center" }}>
-                  <MaterialCommunityIcons
-                    name="plus"
-                    size={45}
-                    color={"#DBB22F"}
-                    onPress={() => setOffset(offset + 2)}
+            <TransactionsViews>
+              {!loadingData && !loadingName && (
+                <>
+                  <FlatList
+                    data={dataTransactions}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <Transaction item={item} userName={userName} />
+                    )}
+                    onEndReached={fetchDataTransactions}
+                    onEndReachedThreshold={0.1}
+                    ItemSeparatorComponent={<View style={{ height: 35 }} />}
+                    showsVerticalScrollIndicator={false}
                   />
-                </View>
+                </>
               )}
-            </>
-          )}
-        </ContentViews>
-      </Scroll>
+            </TransactionsViews>
+          </>
+        )}
+      </ContentViews>
     </Background>
   );
 };

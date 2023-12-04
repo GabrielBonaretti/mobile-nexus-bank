@@ -8,12 +8,13 @@ const NumberParcelsComponent = ({ content }) => {
   const payed =
     parseInt(content.numberPayedParcels) ==
     parseInt(content.numberTotalParcels);
+
   return (
     <>
       {payed ? (
         <MaterialCommunityIcons
           name="check-circle-outline"
-          size={35}
+          size={25}
           color={"#2ACB37"}
         />
       ) : (
