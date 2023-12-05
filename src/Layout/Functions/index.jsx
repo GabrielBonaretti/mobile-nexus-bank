@@ -9,10 +9,26 @@ const Functions = ({ navigation }) => {
     <Background>
       <Subtitle>Functions:</Subtitle>
       <ListFunctions>
-        <Function icon="arrow-up" text="Pay" onPress={() => navigation.navigate("SearchPay")} />
-        <Function icon="arrow-down" text="Receive" onPress={() => navigation.navigate("Receive")}/>
-        <Function icon="credit-card-outline" text="Cards"  onPress={() => navigation.navigate("Cards")}/>
-        <Function icon="bank-outline" text="Loan" />
+        <Function
+          icon="arrow-up"
+          text="Pay"
+          onPress={() => navigation.navigate("SearchPay")}
+        />
+        <Function
+          icon="arrow-down"
+          text="Receive"
+          onPress={() => navigation.navigate("Receive")}
+        />
+        <Function
+          icon="credit-card-outline"
+          text="Cards"
+          onPress={() => navigation.navigate("Cards")}
+        />
+        <Function
+          icon="bank-outline"
+          text="Loan"
+          onPress={() => navigation.navigate("Loan")}
+        />
       </ListFunctions>
     </Background>
   );

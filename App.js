@@ -5,6 +5,7 @@ import Register from "./src/pages/Register";
 import SearchPay from "./src/pages/SearchPay";
 import Receive from "./src/pages/Receive";
 import Cards from "./src/pages/Cards";
+import Loan from "./src/pages/Loan";
 
 // react navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -109,6 +110,9 @@ export default function App() {
   options_parcels = { ...options };
   options_parcels.title = "Parcels";
 
+  options_loan = { ...options };
+  options_loan.title = "Loan";
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -174,6 +178,12 @@ export default function App() {
                 name="Parcels"
                 component={Parcels}
                 options={options_parcels}
+              />
+
+              <Stack.Screen
+                name="Loan"
+                component={Loan}
+                options={options_loan}
               />
             </Stack.Navigator>
           )}

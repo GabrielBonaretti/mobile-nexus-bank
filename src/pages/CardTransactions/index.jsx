@@ -28,9 +28,6 @@ import { api } from "../../service/api";
 // zustand
 import { useAuthStore } from "../../store/authStore";
 
-// Icons
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
 const CardTransactions = ({ navigation }) => {
   const [offset, setOffset] = useState(0);
 

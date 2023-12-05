@@ -9,7 +9,6 @@ export const ViewTypeCard = styled.View`
 
 export const SubsubTitle = styled(Subtitle)`
   font-size: 14px;
-  font-weight: None;
 `;
 
 export const BottomView = styled.View`
