@@ -6,6 +6,8 @@ import SearchPay from "./src/pages/SearchPay";
 import Receive from "./src/pages/Receive";
 import Cards from "./src/pages/Cards";
 import Loan from "./src/pages/Loan";
+import Profile from "./src/pages/Profile";
+import Parcels from "./src/pages/Parcels";
 
 // react navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -21,7 +23,6 @@ import FinishPay from "./src/pages/FinishPay";
 // App.jsx
 import Toast, { SuccessToast, ErrorToast } from "react-native-toast-message";
 import CardTransactions from "./src/pages/CardTransactions";
-import Parcels from "./src/pages/Parcels";
 
 const Stack = createStackNavigator();
 
@@ -113,6 +114,9 @@ export default function App() {
   options_loan = { ...options };
   options_loan.title = "Loan";
 
+  options_profile = { ...options };
+  options_profile.title = "Profile";
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -184,6 +188,12 @@ export default function App() {
                 name="Loan"
                 component={Loan}
                 options={options_loan}
+              />
+
+              <Stack.Screen
+                name="Profile"
+                component={Profile}
+                options={options_profile}
               />
             </Stack.Navigator>
           )}

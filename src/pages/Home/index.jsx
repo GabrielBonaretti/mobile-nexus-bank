@@ -28,6 +28,7 @@ const Home = ({ navigation }) => {
 
       <MyModal
         modalVisible={modalVisible}
+        onPress={() => navigation.navigate("Profile")}
         closeModal={(e) => setModalVisible(false)}
       />
     </Background>

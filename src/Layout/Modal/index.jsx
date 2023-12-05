@@ -10,7 +10,7 @@ import ModalOption from "../../Components/ModalOption";
 // zustend
 import { useAuthStore } from "../../store/authStore";
 
-const MyModal = ({ modalVisible, closeModal }) => {
+const MyModal = ({ modalVisible, onPress , closeModal }) => {
   const clearTokens = useAuthStore((state) => state.clearTokens);
 
   const handleExit = () => {
@@ -30,6 +30,7 @@ const MyModal = ({ modalVisible, closeModal }) => {
           <ModalOption
             imageUrl={require("../../images/user.png")}
             text="My data"
+            onPress={onPress}
           />
           <ModalOption
             imageUrl={require("../../images/star.png")}
