@@ -18,7 +18,8 @@ import {
 } from "./style";
 
 // react
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 
 // zustend
 import { useAuthStore } from "../../store/authStore";
@@ -50,9 +51,11 @@ const Header = ({ openModal }) => {
     }
   };
 
-  useEffect(() => {
-    handleGetContent();
-  }, [auth]);
+  useFocusEffect(
+    useCallback(() => {
+      handleGetContent();
+    }, [])
+  );
 
   return (
     <Background>

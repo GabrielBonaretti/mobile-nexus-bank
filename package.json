@@ -25,7 +25,8 @@
     "react-query": "^3.39.3",
     "styled-components": "^6.1.0",
     "toastify-react-native": "^3.1.2",
-    "zustand": "^4.4.6"
+    "zustand": "^4.4.6",
+    "expo-image-picker": "~14.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

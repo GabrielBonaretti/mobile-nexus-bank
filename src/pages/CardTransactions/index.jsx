@@ -13,7 +13,7 @@ import {
 
 // components
 import Credit from "../../Components/Credit";
-import { FlatListComponent, View, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import Card from "../../Components/Card";
 import Transaction from "../../Components/Transaction";
 

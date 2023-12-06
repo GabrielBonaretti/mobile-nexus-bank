@@ -1,17 +1,22 @@
-import { View } from "react-native"
-import { Pressable } from "react-native"
-import { Text } from "react-native"
-import { Image } from "react-native"
+import { View } from "react-native";
+import { Pressable } from "react-native";
+import { Text } from "react-native";
+import { Image } from "react-native";
 
 import { useAuthStore } from "../../store/authStore";
 
 import { api } from "../../service/api";
-import { useEffect, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
 
+// react
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { Background, ImageStyled } from "./style";
 
 const ImageProfile = () => {
   // State for storing the user's profile image URL
   const [urlImage, setUrlImage] = useState();
+  const [selectedImage, setSelectedImage] = useState(null);
 
   // Zustand hook to access authentication information
   const auth = useAuthStore((state) => state.accessToken);
@@ -20,44 +25,73 @@ const ImageProfile = () => {
     Authorization: "Bearer " + auth,
   };
 
-  const getPic = async (event) => {
-    console.log("a")
+  const pickImage = async () => {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
+    if (!result.canceled) {
+      setSelectedImage(result.assets);
+      uploadImage();
+    }
+  };
+
+  const getPic = async (event) => {
     if (auth) {
       await api
         .get("/api/user/", { headers: header })
         .then((response) => {
-          console.log(response.data.url_image)
           setUrlImage(response.data.url_image);
         })
         .catch((error) => {
           console.log(error);
-          if (error.response.statusText === "Unauthorized") {
-            notify({ content: "Login time expired, log in again to see your data", type: 1 });
-            clearTokens();
-          }
         });
     }
   };
 
+  const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append("url_image", {
+      uri: selectedImage,
+      name: "photo.jpg",
+      type: "image/jpg",
+    });
 
-  // useEffect(() => {
-  //   getPic()
-  // }, [auth]);
+    // Replace 'YOUR_API_ENDPOINT' with the actual endpoint of your API
+    await api
+      .patch("/api/user/", formData, {
+        headers: {
+          Authorization: "Bearer " + auth,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log("Image uploaded successfully:", response.data);
+        getPic();
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error.toJSON());
+      });
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getPic();
+    }, [])
+  );
 
   return (
-    <View>
+    <Background onPress={() => pickImage()}>
       {urlImage ? (
-        <ImageProfile source={{ uri: urlImage }} />
+        <ImageStyled source={{ uri: urlImage }} />
       ) : (
-        <ImageProfile source={require("../../images/user.png")} />
+        <ImageStyled source={require("../../images/user.png")} />
       )}
+    </Background>
+  );
+};
 
-      <Pressable>
-        <Text>Change photo</Text>
-      </Pressable>
-    </View>
-  )
-}
-
-export default ImageProfile
+export default ImageProfile;
