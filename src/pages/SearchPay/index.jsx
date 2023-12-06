@@ -35,6 +35,7 @@ const SearchPay = ({ navigation }) => {
         headers: header,
       })
       .then((response) => {
+        console.log("teste")
         if (response.data.id == undefined) {
           Toast.show({
             type: "error",

@@ -29,14 +29,11 @@ const ImageProfile = () => {
     let result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setSelectedImage(result.assets);
-      uploadImage();
-    }
+    setSelectedImage(result.assets[0].uri);
   };
 
   const getPic = async (event) => {
@@ -53,6 +50,7 @@ const ImageProfile = () => {
   };
 
   const uploadImage = async () => {
+    console.log("testeasr")
     const formData = new FormData();
     formData.append("url_image", {
       uri: selectedImage,
@@ -82,6 +80,13 @@ const ImageProfile = () => {
       getPic();
     }, [])
   );
+
+  useEffect(() => {
+    console.log(selectedImage)
+    if (selectedImage) {
+      uploadImage();
+    }
+  }, [selectedImage])
 
   return (
     <Background onPress={() => pickImage()}>
